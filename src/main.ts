@@ -5,6 +5,8 @@ import { ZodFilter } from './filters/zod.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new ZodFilter());
+  app.setGlobalPrefix('api');
+  app.enableCors();
   await app.listen(5001);
 }
 bootstrap();

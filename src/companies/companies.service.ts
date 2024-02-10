@@ -34,7 +34,7 @@ export class CompaniesService {
     try {
       const allComanies = await this.prisma.client.companies.findMany();
 
-      return { comanies: allComanies };
+      return { companies: allComanies };
     } catch (error) {
       throw new HttpException(
         {
