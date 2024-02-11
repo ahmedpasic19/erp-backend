@@ -21,19 +21,22 @@ model users {
 }
 
 model articles {
-  id                Int      @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   name              String
   code              String
-  price_without_vat Float    @default(0)
-  price_wtih_vat    Float    @default(0)
-  created_at        DateTime @default(now())
-  updated_at        DateTime @default(now())
+  price_without_vat Float     @default(0)
+  price_with_vat    Float     @default(0)
+  company           companies @relation(fields: [companies_id], references: [id])
+  companies_id      Int
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @default(now())
 }
 
 model companies {
   id                 Int                  @id @default(autoincrement())
   name               String
   users              users[]
+  articles           articles[]
   users_in_companies users_in_companies[]
 }
 
