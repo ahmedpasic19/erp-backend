@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -9,10 +10,12 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10); // Hash password with bcrypt
+
       const newUser = await this.prisma.client.users.create({
         data: {
           name: createUserDto.name,
-          password: createUserDto.password,
+          password: hashedPassword,
           email: createUserDto.email,
           companies: createUserDto.companies_id
             ? { connect: { id: +createUserDto.companies_id } }
@@ -58,6 +61,27 @@ export class UsersService {
     try {
       const foundUser = await this.prisma.client.users.findUnique({
         where: { id },
+      });
+
+      return { user: foundUser };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Error accured!',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async findOneByName(name: string) {
+    try {
+      const foundUser = await this.prisma.client.users.findFirstOrThrow({
+        where: { name },
       });
 
       return { user: foundUser };
