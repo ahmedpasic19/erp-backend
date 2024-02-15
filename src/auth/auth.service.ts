@@ -38,10 +38,20 @@ export class AuthService {
   async login(user: users) {
     const payload = { username: user.name, sub: user.id };
 
+    const access_token = this.jwtService.sign(payload, {
+      secret: jwtConstants.secret,
+    });
+
+    // Return the user object
+    const { user: db_user } = await this.usersService.findOne(user.id);
+
+    // Remove password
+    const user_no_pass = { ...db_user };
+    delete user_no_pass.password;
+
     return {
-      access_token: this.jwtService.sign(payload, {
-        secret: jwtConstants.secret,
-      }),
+      access_token,
+      user: user_no_pass,
     };
   }
 }

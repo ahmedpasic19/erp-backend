@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const UpdateUserDto = z.object({
-  id: z.coerce.number().min(1, 'Must provide userId'),
+  id: z.string().min(1, 'Must provide userId'),
   name: z
     .string()
     .min(4, 'Minimum 4 characters')
@@ -11,7 +11,12 @@ export const UpdateUserDto = z.object({
     .min(8, 'Minimum 8 characters')
     .max(45, 'Maximum 45 characters'),
   email: z.string().email('Not valid email format'),
-  companies_id: z.coerce.number().min(1, 'Must provide companyId'),
+  companies: z.array(
+    z.object({
+      company_id: z.coerce.number().min(1, 'Must provide companyId'),
+      user_id: z.string().min(1, 'Must provide userId'),
+    }),
+  ),
 });
 
 export type UpdateUserDto = z.infer<typeof UpdateUserDto>;
