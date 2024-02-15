@@ -10,14 +10,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               users     @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         users    @relation(fields: [userId], references: [id])
+}
+
 model users {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  email              String
-  password           String
-  companies_id       Int?
-  companies          companies?           @relation(fields: [companies_id], references: [id])
-  users_in_companies users_in_companies[]
+  id            String               @id @default(cuid())
+  name          String?
+  email         String?              @unique
+  password      String
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @default(now()) @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  companies     users_in_companies[]
 }
 
 model articles {
@@ -33,16 +64,15 @@ model articles {
 }
 
 model companies {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  users              users[]
-  articles           articles[]
-  users_in_companies users_in_companies[]
+  id       Int                  @id @default(autoincrement())
+  name     String
+  articles articles[]
+  users    users_in_companies[]
 }
 
 model users_in_companies {
   user       users     @relation(fields: [user_id], references: [id])
-  user_id    Int
+  user_id    String
   company    companies @relation(fields: [company_id], references: [id])
   company_id Int
 
