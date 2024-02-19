@@ -49,6 +49,37 @@ export class CompaniesService {
     }
   }
 
+  async findAllUsersCompanies(id: string) {
+    try {
+      const allComanies = await this.prisma.client.users_in_companies.findMany({
+        where: {
+          user_id: id,
+        },
+        include: {
+          company: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return { companies: allComanies.map(({ company }) => company) };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Error accured!',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
   async findOne(id: number) {
     try {
       const company = await this.prisma.client.companies.findUnique({
