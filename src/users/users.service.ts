@@ -132,7 +132,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
-      const newUser = await this.prisma.client.users.update({
+      const updatedUser = await this.prisma.client.users.update({
         where: { id },
         data: {
           name: updateUserDto.name,
@@ -149,12 +149,12 @@ export class UsersService {
       // Set new relations and old relation
       await this.prisma.client.users_in_companies.createMany({
         data: updateUserDto.companies.map((relation) => ({
-          user_id: relation.user_id,
+          user_id: id,
           company_id: relation.company_id,
         })),
       });
 
-      return { message: 'User updated!', user: newUser };
+      return { message: 'User updated!', user: updatedUser };
     } catch (error) {
       throw new HttpException(
         {
