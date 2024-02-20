@@ -28,6 +28,11 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
+  @Get('by-user/:id')
+  findAllUsersCompanies(@Param('id') id: string) {
+    return this.companiesService.findAllUsersCompanies(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companiesService.findOne(+id);
