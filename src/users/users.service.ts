@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { SetCurrenctCompanyDto } from './dto/set-company.dto';
 
 @Injectable()
 export class UsersService {
@@ -35,7 +36,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
@@ -54,7 +55,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
@@ -87,7 +88,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
@@ -120,7 +121,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
@@ -159,7 +160,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
@@ -180,7 +181,54 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Error accured!',
+          error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  // User selects what company he wants to sign in to
+  // On sign out relation should be removed
+  async setCurrentCompany(setCurrentCompanyDto: SetCurrenctCompanyDto) {
+    try {
+      const updatedUser = await this.prisma.client.users.update({
+        where: { id: setCurrentCompanyDto.user_id },
+        data: { current_company_id: setCurrentCompanyDto.company_id },
+      });
+
+      return { message: 'User updated', user: updatedUser };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  // Run this API on sign out
+  async removeCurrentCompany(id: string) {
+    try {
+      const updatedUser = await this.prisma.client.users.update({
+        where: { id },
+        data: { current_company_id: null },
+      });
+
+      return { message: 'Company removed!', user: updatedUser };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error,
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
         {
