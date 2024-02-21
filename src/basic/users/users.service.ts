@@ -183,27 +183,26 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
+      const { companies, ...userData } = updateUserDto;
       const updatedUser = await this.prisma.client.users.update({
         where: { id },
-        data: {
-          name: updateUserDto.name,
-          password: updateUserDto.password,
-          email: updateUserDto.email,
-        },
+        data: userData,
       });
 
-      // Delete old relation
-      await this.prisma.client.users_in_companies.deleteMany({
-        where: { user_id: id },
-      });
+      if (companies) {
+        // Delete old relation
+        await this.prisma.client.users_in_companies.deleteMany({
+          where: { user_id: id },
+        });
 
-      // Set new relations and old relation
-      await this.prisma.client.users_in_companies.createMany({
-        data: updateUserDto.companies.map((relation) => ({
-          user_id: id,
-          company_id: relation.company_id,
-        })),
-      });
+        // Set new relations and old relation
+        await this.prisma.client.users_in_companies.createMany({
+          data: companies.map((relation) => ({
+            user_id: id,
+            company_id: relation.company_id,
+          })),
+        });
+      }
 
       return { message: 'User updated!', user: updatedUser };
     } catch (error) {
