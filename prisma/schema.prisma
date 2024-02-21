@@ -50,6 +50,12 @@ model users {
   accounts           Account[]
   sessions           Session[]
   companies          users_in_companies[]
+  type               user_type            @default(USER)
+}
+
+enum user_type {
+  USER
+  CLIENT
 }
 
 model articles {
