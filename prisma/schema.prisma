@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -24,6 +21,7 @@ model Account {
   user               users     @relation(fields: [userId], references: [id])
 
   @@unique([providerId, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -35,6 +33,8 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   user         users    @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model users {
@@ -42,14 +42,14 @@ model users {
   name               String?
   email              String?              @unique
   password           String
+  createdAt          DateTime             @default(now())
   emailVerified      DateTime?
   image              String?
-  createdAt          DateTime             @default(now())
   updatedAt          DateTime             @default(now()) @updatedAt
+  current_company_id Int?
   accounts           Account[]
   sessions           Session[]
   companies          users_in_companies[]
-  current_company_id Int?
 }
 
 model articles {
@@ -57,35 +57,39 @@ model articles {
   name              String
   code              String
   price_without_vat Float     @default(0)
-  price_with_vat    Float     @default(0)
-  company           companies @relation(fields: [companies_id], references: [id])
-  companies_id      Int
   created_at        DateTime  @default(now())
   updated_at        DateTime  @default(now())
+  companies_id      Int
+  price_with_vat    Float     @default(0)
+  company           companies @relation(fields: [companies_id], references: [id])
+
+  @@index([companies_id], map: "articles_companies_id_fkey")
 }
 
 model companies {
   id       Int                  @id @default(autoincrement())
   name     String
   articles articles[]
-  users    users_in_companies[]
   storages storages[]
+  users    users_in_companies[]
 }
 
 model users_in_companies {
-  user       users     @relation(fields: [user_id], references: [id])
   user_id    String
-  company    companies @relation(fields: [company_id], references: [id])
   company_id Int
+  company    companies @relation(fields: [company_id], references: [id])
+  user       users     @relation(fields: [user_id], references: [id])
 
   @@id([user_id, company_id])
+  @@index([company_id], map: "users_in_companies_company_id_fkey")
 }
 
 model storages {
   id           Int       @id @default(autoincrement())
   name         String
-  company      companies @relation(fields: [companies_id], references: [id])
   companies_id Int
+  created_at   DateTime  @default(now())
+  company      companies @relation(fields: [companies_id], references: [id])
 
-  created_at DateTime @default(now())
+  @@index([companies_id], map: "storages_companies_id_fkey")
 }

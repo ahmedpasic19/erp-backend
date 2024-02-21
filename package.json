@@ -18,12 +18,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:generate": "pnpx prisma generate",
-    "db:migrate": "pnpx prisma migrate dev",
-    "db:pull": "pnpx prisma db pull",
-    "db:push": "pnpx prisma db push",
-    "db:deploy": "pnpm run prisma:migrate && pnpm run prisma:push",
-    "db:reset": "pnpm run prisma:migrate && pnpm run prisma:pull && pnpm run prisma:push"
+    "db:generate": "pnpm prisma generate",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:pull": "pnpm prisma db pull",
+    "db:push": "pnpm prisma db push",
+    "db:deploy": "pnpm run db:migrate && pnpm run db:push",
+    "db:reset": "pnpm run db:migrate && pnpm run db:pull && pnpm run db:push",
+    "db:seed": "ts-node ./src/seed.ts",
+    "db:clear": "pnpm prisma db push --force-reset"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
