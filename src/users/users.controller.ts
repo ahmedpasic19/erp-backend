@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ZodPipe } from 'src/pipes/zod.pipe';
 import { SetCurrenctCompanyDto } from './dto/set-company.dto';
+import { CreateClientDto } from './dto/create-client.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,9 +24,21 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post('create-client')
+  createClient(
+    @Body(new ZodPipe(CreateClientDto)) createClientDto: CreateClientDto,
+  ) {
+    return this.usersService.createClient(createClientDto);
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('companies-clients/:id')
+  findAllCompanyClients(@Param('id') id: string) {
+    return this.usersService.findAllCompanyClients(+id);
   }
 
   @Get(':id')
