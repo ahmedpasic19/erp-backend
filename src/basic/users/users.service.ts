@@ -13,18 +13,19 @@ export class UsersService {
     try {
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10); // Hash password with bcrypt
 
+      const { companies, ...userData } = createUserDto;
+
       const newUser = await this.prisma.client.users.create({
         data: {
-          name: createUserDto.name,
+          ...userData,
           password: hashedPassword,
-          email: createUserDto.email,
         },
       });
 
       // Relate to companies
-      if (createUserDto.companies.length) {
+      if (companies && companies.length) {
         await this.prisma.client.users_in_companies.createMany({
-          data: createUserDto.companies.map((relation) => ({
+          data: companies.map((relation) => ({
             company_id: relation.company_id,
             user_id: newUser.id,
           })),
@@ -32,6 +33,55 @@ export class UsersService {
       }
 
       return { message: 'User created!', user: newUser };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async createClient(createClientDto: CreateUserDto) {
+    try {
+      const { user } = await this.create({
+        ...createClientDto,
+        password: Math.random().toString().slice(0, 8), // Set random pass cuz clients can't signin anyway
+      });
+
+      return { message: 'Client created!', user };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async findAllCompanyClients(id: number) {
+    try {
+      const clients = await this.prisma.client.users.findMany({
+        where: {
+          type: 'CLIENT',
+          AND: {
+            current_company_id: id,
+          },
+        },
+      });
+
+      return { clients };
     } catch (error) {
       throw new HttpException(
         {
