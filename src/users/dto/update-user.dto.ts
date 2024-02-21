@@ -11,11 +11,13 @@ export const UpdateUserDto = z.object({
     .min(8, 'Minimum 8 characters')
     .max(45, 'Maximum 45 characters'),
   email: z.string().email('Not valid email format'),
-  companies: z.array(
-    z.object({
-      company_id: z.coerce.number().min(1, 'Must provide companyId'),
-    }),
-  ),
+  companies: z
+    .array(
+      z.object({
+        company_id: z.coerce.number().min(1, 'Must provide companyId'),
+      }),
+    )
+    .nullish(),
 });
 
 export type UpdateUserDto = z.infer<typeof UpdateUserDto>;
