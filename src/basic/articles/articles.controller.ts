@@ -10,7 +10,7 @@ import {
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ZodPipe } from 'src/pipes/zod.pipe';
+import { ZodPipe } from 'src/common/pipes/zod.pipe';
 
 @Controller('articles')
 export class ArticlesController {

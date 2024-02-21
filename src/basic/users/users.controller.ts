@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ZodPipe } from 'src/pipes/zod.pipe';
+import { ZodPipe } from 'src/common/pipes/zod.pipe';
 import { SetCurrenctCompanyDto } from './dto/set-company.dto';
 
 @Controller('users')
