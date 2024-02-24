@@ -9,7 +9,8 @@ export const UpdateUserDto = z.object({
   password: z
     .string()
     .min(8, 'Minimum 8 characters')
-    .max(45, 'Maximum 45 characters'),
+    .max(45, 'Maximum 45 characters')
+    .nullish(),
   email: z.string().email('Not valid email format'),
   companies: z
     .array(

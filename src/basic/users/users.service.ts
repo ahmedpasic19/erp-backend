@@ -98,7 +98,9 @@ export class UsersService {
 
   async findAll() {
     try {
-      const allUsers = await this.prisma.client.users.findMany();
+      const allUsers = await this.prisma.client.users.findMany({
+        where: { type: 'USER' },
+      });
 
       return { users: allUsers };
     } catch (error) {
@@ -132,6 +134,7 @@ export class UsersService {
           },
         },
       });
+      delete foundUser.password;
 
       return { user: foundUser };
     } catch (error) {
@@ -166,6 +169,10 @@ export class UsersService {
         },
       });
 
+      /**
+       * Should return password here
+       * because this is used in the auth service
+       */
       return { user: foundUser };
     } catch (error) {
       throw new HttpException(
@@ -184,9 +191,34 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       const { companies, ...userData } = updateUserDto;
+
+      // If password is sent in the body check if it is changes
+      // If password is changed make a new hash
+      let newHash = '';
+      let isChanged = true; // if TRUE then password has NOT been changed
+      if (updateUserDto.password) {
+        // Get user password for compare
+        const founduser = await this.prisma.client.users.findUnique({
+          where: { id },
+          select: { password: true },
+        });
+
+        // Compare passwords
+        // Will return "false" if passwords do not match
+        // Meaning it has been changesd
+        isChanged = await this.comparePasswords(
+          userData.password,
+          founduser.password,
+        );
+      }
+
+      if (!isChanged) {
+        newHash = await bcrypt.hash(userData.password, 10); // Hash password with bcrypt
+      }
+
       const updatedUser = await this.prisma.client.users.update({
         where: { id },
-        data: userData,
+        data: { ...userData, ...(!isChanged ? { password: newHash } : {}) },
       });
 
       if (companies) {
@@ -285,5 +317,12 @@ export class UsersService {
         },
       );
     }
+  }
+
+  private async comparePasswords(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(plainTextPassword, hashedPassword);
   }
 }
