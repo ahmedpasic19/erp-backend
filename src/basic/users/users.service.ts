@@ -188,6 +188,47 @@ export class UsersService {
     }
   }
 
+  async findCompanyClientsByName(companies_id: number, name: string) {
+    try {
+      const clients = await this.prisma.client.users.findMany({
+        where: {
+          name: {
+            contains: name.toLocaleLowerCase().trim(),
+          },
+          AND: {
+            type: 'CLIENT',
+            current_company_id: companies_id,
+          },
+        },
+        select: {
+          name: true,
+          id: true,
+          email: true,
+          image: true,
+          current_company_id: true,
+          password: false, // just in case hehe
+        },
+      });
+
+      /**
+       * Should NOT return password here
+       * because this is used in the auth service
+       */
+      return { clients };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
       const { companies, ...userData } = updateUserDto;
