@@ -98,6 +98,31 @@ export class ArticlesService {
     }
   }
 
+  async findByName(name: string) {
+    try {
+      const articles = await this.prisma.client.articles.findMany({
+        where: {
+          name: {
+            contains: name.toLocaleLowerCase().trim(),
+          },
+        },
+      });
+
+      return { articles };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Error accured!',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
   async update(id: number, updateArticleDto: UpdateArticleDto) {
     try {
       const updatedArticle = await this.prisma.client.articles.update({
