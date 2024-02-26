@@ -10,7 +10,7 @@ import {
 import { StoragesService } from './storages.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
-import { ZodPipe } from 'src/pipes/zod.pipe';
+import { ZodPipe } from 'src/common/pipes/zod.pipe';
 
 @Controller('storages')
 export class StoragesController {

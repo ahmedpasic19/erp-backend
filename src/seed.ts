@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -18,21 +19,23 @@ async function seed() {
       select: { id: true },
     });
 
+    const password = await bcrypt.hash('user1243', 10);
+
     const users = [
       {
-        name: 'Admin user 1',
-        email: 'admin1@gmail.com',
-        password: '11111111',
+        name: 'Admin1',
+        email: 'admin1@hotmail.com',
+        password,
       },
       {
-        name: 'Admin user 2',
-        email: 'admin2@gmail.com',
-        password: '22222222',
+        name: 'Admin2',
+        email: 'admin2@hotmail.com',
+        password,
       },
       {
-        name: 'Admin user 3',
-        email: 'admin3@gmail.com',
-        password: '33333333',
+        name: 'Admin3',
+        email: 'admin3@hotmail.com',
+        password,
       },
     ];
 
@@ -58,6 +61,18 @@ async function seed() {
 
     await prisma.users_in_companies.createMany({
       data: prepared_data,
+    });
+
+    const currencies = [
+      { id: 1, name: 'BAM', course: 1.0, symbol: 'BAM' },
+      { id: 2, name: 'Euro', course: 0.51129, symbol: '€' },
+      { id: 3, name: 'USD', course: 0.61768, symbol: '$' },
+      { id: 4, name: 'GBP', course: 0.43647, symbol: '£' },
+      { id: 5, name: 'JPY', course: 69.031, symbol: '¥' },
+    ];
+
+    await prisma.currencies.createMany({
+      data: currencies,
     });
 
     console.log('Sucessfull seed!');
