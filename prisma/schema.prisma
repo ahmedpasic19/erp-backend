@@ -148,7 +148,6 @@ model offer_articles {
   selling_price          Float  @default(0) // base_price * amount - discount (%)
   selling_price_with_vat Float  @default(0) // base_price_with_vat * amount - discount (%) // This is the price product is sold for
   amount                 Int    @default(0)
-  total                  Float  @default(0)
   vat                    Float  @default(0) // percentage
   vat_value              Float  @default(0)
   discount               Float  @default(0)
