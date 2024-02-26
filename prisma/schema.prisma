@@ -51,6 +51,8 @@ model users {
   sessions           Session[]
   companies          users_in_companies[]
   type               user_type            @default(USER)
+  offers_client      offers[]             @relation("client")
+  offers_user        offers[]             @relation("worker")
 }
 
 enum user_type {
@@ -59,15 +61,16 @@ enum user_type {
 }
 
 model articles {
-  id                Int       @id @default(autoincrement())
+  id                Int              @id @default(autoincrement())
   name              String
   code              String
-  price_without_vat Float     @default(0)
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @default(now())
+  price_without_vat Float            @default(0)
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @default(now())
   companies_id      Int
-  price_with_vat    Float     @default(0)
-  company           companies @relation(fields: [companies_id], references: [id])
+  price_with_vat    Float            @default(0)
+  company           companies        @relation(fields: [companies_id], references: [id])
+  offer_articles    offer_articles[]
 
   @@index([companies_id], map: "articles_companies_id_fkey")
 }
@@ -78,6 +81,7 @@ model companies {
   articles articles[]
   storages storages[]
   users    users_in_companies[]
+  offers   offers[]
 }
 
 model users_in_companies {
@@ -98,4 +102,60 @@ model storages {
   company      companies @relation(fields: [companies_id], references: [id])
 
   @@index([companies_id], map: "storages_companies_id_fkey")
+}
+
+model currencies {
+  id     Int      @id @default(autoincrement())
+  name   String
+  course Float
+  symbol String
+  offers offers[]
+}
+
+model offers {
+  id                Int      @id @default(autoincrement())
+  offer_number      String   @default("0000")
+  offer_total       Float    @default(0)
+  vat               Float    @default(0)
+  vat_value         Float    @default(0)
+  total_discount    Float    @default(0)
+  date_of_order     DateTime @default(now())
+  delivery_due_date DateTime @default(now())
+  payment_due_date  DateTime @default(now())
+  worker            users    @relation(name: "worker", fields: [worker_id], references: [id])
+  valid             Boolean  @default(true) // used for logical delete
+
+  client         users            @relation(name: "client", fields: [client_id], references: [id])
+  company        companies        @relation(fields: [companies_id], references: [id])
+  currency       currencies       @relation(fields: [currencies_id], references: [id])
+  offer_articles offer_articles[]
+
+  companies_id  Int
+  client_id     String
+  currencies_id Int
+  worker_id     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model offer_articles {
+  id                     Int    @id @default(autoincrement())
+  name                   String
+  code                   String
+  base_price             Float  @default(0)
+  base_price_with_vat    Float  @default(0)
+  selling_price          Float  @default(0) // base_price * amount - discount (%)
+  selling_price_with_vat Float  @default(0) // base_price_with_vat * amount - discount (%) // This is the price product is sold for
+  amount                 Int    @default(0)
+  total                  Float  @default(0)
+  vat                    Float  @default(0) // percentage
+  vat_value              Float  @default(0)
+  discount               Float  @default(0)
+  discount_value         Float  @default(0)
+
+  article     articles @relation(fields: [articles_id], references: [id])
+  articles_id Int
+  offer       offers   @relation(fields: [offers_id], references: [id])
+  offers_id   Int
 }

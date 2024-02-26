@@ -10,6 +10,9 @@ import { UsersService } from './basic/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { StoragesModule } from './basic/storages/storages.module';
+import { OffersModule } from './sales/offers/offers.module';
+import { OfferArticlesModule } from './sales/offer-articles/offer-articles.module';
+import { FinancialService } from './common/financial/financial.service';
 
 @Module({
   imports: [
@@ -19,8 +22,10 @@ import { StoragesModule } from './basic/storages/storages.module';
     ArticlesModule,
     PrismaModule,
     StoragesModule,
+    OffersModule,
+    OfferArticlesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, UsersService, JwtService],
+  providers: [AppService, AuthService, UsersService, JwtService, FinancialService],
 })
 export class AppModule {}

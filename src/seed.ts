@@ -63,6 +63,18 @@ async function seed() {
       data: prepared_data,
     });
 
+    const currencies = [
+      { id: 1, name: 'BAM', course: 1.0, symbol: 'BAM' },
+      { id: 2, name: 'Euro', course: 0.51129, symbol: '€' },
+      { id: 3, name: 'USD', course: 0.61768, symbol: '$' },
+      { id: 4, name: 'GBP', course: 0.43647, symbol: '£' },
+      { id: 5, name: 'JPY', course: 69.031, symbol: '¥' },
+    ];
+
+    await prisma.currencies.createMany({
+      data: currencies,
+    });
+
     console.log('Sucessfull seed!');
   } catch (error) {
     console.log(error);
