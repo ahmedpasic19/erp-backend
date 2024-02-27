@@ -13,6 +13,7 @@ import { StoragesModule } from './basic/storages/storages.module';
 import { OffersModule } from './sales/offers/offers.module';
 import { OfferArticlesModule } from './sales/offer-articles/offer-articles.module';
 import { FinancialService } from './common/financial/financial.service';
+import { CurrenciesModule } from './sales/currencies/currencies.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { FinancialService } from './common/financial/financial.service';
     StoragesModule,
     OffersModule,
     OfferArticlesModule,
+    CurrenciesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, UsersService, JwtService, FinancialService],
