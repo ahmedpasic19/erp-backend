@@ -192,9 +192,15 @@ export class UsersService {
     try {
       const clients = await this.prisma.client.users.findMany({
         where: {
-          name: {
-            contains: name.toLocaleLowerCase().trim(),
-          },
+          // Return any 5 clients if name provided as "ANY_CLIENTS"
+          // This simbolizes user hasnt searched for any clients yet
+          ...(name === 'ANY_CLIENTS'
+            ? {}
+            : {
+                name: {
+                  contains: name.toLocaleLowerCase().trim(),
+                },
+              }),
           AND: {
             type: 'CLIENT',
             current_company_id: companies_id,
@@ -208,6 +214,7 @@ export class UsersService {
           current_company_id: true,
           password: false, // just in case hehe
         },
+        take: name.length > 0 ? 10 : 5,
       });
 
       /**
