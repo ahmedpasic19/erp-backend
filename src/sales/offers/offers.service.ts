@@ -42,6 +42,14 @@ export class OffersService {
     try {
       const companiesOffers = await this.prisma.client.offers.findMany({
         where: { companies_id: id, AND: { valid: true } },
+        include: {
+          worker: {
+            select: { name: true },
+          },
+          client: {
+            select: { name: true },
+          },
+        },
       });
 
       return { offers: companiesOffers };
