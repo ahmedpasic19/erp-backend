@@ -102,10 +102,17 @@ export class ArticlesService {
     try {
       const articles = await this.prisma.client.articles.findMany({
         where: {
-          name: {
-            contains: name.toLocaleLowerCase().trim(),
-          },
+          // Return any 5 clients if name provided as "ANY_ARTICLES"
+          // This simbolizes user hasnt searched for any clients yet
+          ...(name === 'ANY_ARTICLES'
+            ? {}
+            : {
+                name: {
+                  contains: name.toLocaleLowerCase().trim(),
+                },
+              }),
         },
+        take: name === 'ANY_CLIENTS' ? 5 : 10,
       });
 
       return { articles };

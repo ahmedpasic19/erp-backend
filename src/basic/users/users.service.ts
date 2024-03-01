@@ -214,7 +214,7 @@ export class UsersService {
           current_company_id: true,
           password: false, // just in case hehe
         },
-        take: name.length > 0 ? 10 : 5,
+        take: name === 'ANY_CLIENTS' ? 5 : 10,
       });
 
       /**
