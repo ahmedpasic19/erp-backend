@@ -28,9 +28,12 @@ export class ArticlesController {
     return this.articlesService.findAll(+id);
   }
 
-  @Get('/by-name/:name')
-  findByName(@Param('name') name: string) {
-    return this.articlesService.findByName(name);
+  @Get('/by-name/:companyId/:name')
+  findByName(
+    @Param('name') name: string,
+    @Param('companyId') companyId: string,
+  ) {
+    return this.articlesService.findByName(name, +companyId);
   }
 
   @Get(':id')

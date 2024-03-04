@@ -98,7 +98,7 @@ export class ArticlesService {
     }
   }
 
-  async findByName(name: string) {
+  async findByName(name: string, companies_id: number) {
     try {
       const articles = await this.prisma.client.articles.findMany({
         where: {
@@ -111,6 +111,9 @@ export class ArticlesService {
                   contains: name.toLocaleLowerCase().trim(),
                 },
               }),
+          AND: {
+            companies_id,
+          },
         },
         take: name === 'ANY_CLIENTS' ? 5 : 10,
       });
