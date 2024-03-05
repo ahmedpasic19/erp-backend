@@ -14,6 +14,8 @@ import { OffersModule } from './sales/offers/offers.module';
 import { OfferArticlesModule } from './sales/offer-articles/offer-articles.module';
 import { FinancialService } from './common/financial/financial.service';
 import { CurrenciesModule } from './sales/currencies/currencies.module';
+import { InvoicesModule } from './sales/invoices/invoices.module';
+import { InvoiceArticlesModule } from './sales/invoice-articles/invoice-articles.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { CurrenciesModule } from './sales/currencies/currencies.module';
     OffersModule,
     OfferArticlesModule,
     CurrenciesModule,
+    InvoicesModule,
+    InvoiceArticlesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, UsersService, JwtService, FinancialService],
