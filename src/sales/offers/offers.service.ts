@@ -127,6 +127,11 @@ export class OffersService {
 
   async remove(id: number) {
     try {
+      // DELETE all offer-articles
+      await this.prisma.client.offer_articles.deleteMany({
+        where: { offers_id: id },
+      });
+
       const deletedOffer = await this.prisma.client.offers.delete({
         where: { id },
       });
