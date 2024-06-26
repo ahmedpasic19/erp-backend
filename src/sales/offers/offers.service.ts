@@ -73,6 +73,18 @@ export class OffersService {
         where: { id },
         include: {
           offer_articles: true,
+          client: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          currency: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
 
